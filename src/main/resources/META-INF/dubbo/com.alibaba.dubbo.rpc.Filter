@@ -1,2 +1,2 @@
-braveConsumerFilter=
-braveProviderFilter=
+braveConsumerFilter=me.walkongrass.dubbo.tracker.filter.DubboConsumerFilter
+braveProviderFilter=me.walkongrass.dubbo.tracker.filter.DubboProviderFilter
