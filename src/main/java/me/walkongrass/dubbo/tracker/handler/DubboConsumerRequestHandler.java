@@ -44,7 +44,7 @@ public class DubboConsumerRequestHandler extends DubboBaseHandler{
 			traceData.setVersion(url.getParameter(Constants.VERSION_KEY));
 			traceData.setType("consumer");
 			if(upstreamData != null) {
-				traceData.setHop(upstreamData.getHop());
+				traceData.setHop(upstreamData.getHop()+1);
 				traceData.setGroupId(upstreamData.getGroupId());
 			}
 			

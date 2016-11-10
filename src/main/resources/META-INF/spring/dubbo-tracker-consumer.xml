@@ -12,7 +12,7 @@
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	 http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-	<dubbo:reference interface="me.walkongrass.dubbo.tracker.service.DubboTracerService" check="false"/>
+	<dubbo:reference id="tracerService" interface="me.walkongrass.dubbo.tracker.service.DubboTracerService" check="false"/>
 	
 	<bean id="dubboConsumerRequestHandler" class="me.walkongrass.dubbo.tracker.handler.DubboConsumerRequestHandler">
 	</bean>	

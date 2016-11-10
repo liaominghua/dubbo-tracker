@@ -12,6 +12,7 @@ import com.alibaba.dubbo.rpc.RpcException;
 
 import me.walkongrass.dubbo.tracker.handler.DubboBaseHandler;
 import me.walkongrass.dubbo.tracker.handler.DubboConsumerRequestHandler;
+import me.walkongrass.dubbo.tracker.service.DubboTracerService;
 
 /**
  * Created by chenjg on 16/7/24.
@@ -26,13 +27,14 @@ public class DubboConsumerFilter extends DubboRpcContextBaseFilter {
 
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
+        	if(invoker.getUrl().getServiceInterface().equals(DubboTracerService.class.getName())){
+        		return invoker.invoke(invocation);
+        	}
         	dubboConsumerRequestHandler.handle(invoker, invocation);
             Result rpcResult = invoker.invoke(invocation);
             return rpcResult;
         }catch (RpcException ex){
             throw  ex;
-        }finally {
-        	cleanup();
         }
     }
 

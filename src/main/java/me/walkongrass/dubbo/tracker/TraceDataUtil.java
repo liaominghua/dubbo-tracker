@@ -6,6 +6,8 @@ package me.walkongrass.dubbo.tracker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 import me.walkongrass.dubbo.tracker.model.BaseTraceData;
 
 /**
@@ -23,8 +25,13 @@ public final class TraceDataUtil {
 		}
 		else {
 			BaseTraceData parentData = new BaseTraceData();
-			parentData.setGroupId(map.get(Constants.groupId));
-			parentData.setHop(Integer.valueOf(map.get(Constants.hop)));
+			if(!StringUtils.isEmpty(map.get(Constants.groupId))){
+				parentData.setGroupId(map.get(Constants.groupId));
+			}
+			if(!StringUtils.isEmpty(map.get(Constants.hop))){
+				parentData.setHop(Integer.valueOf(map.get(Constants.hop)));
+			}
+			
 			return parentData;
 		}
 	}
