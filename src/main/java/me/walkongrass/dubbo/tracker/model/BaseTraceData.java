@@ -11,8 +11,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import me.walkongrass.dubbo.tracker.Constants;
 
 public class BaseTraceData implements Serializable {
-	private static final ThreadLocal<BaseTraceData> Container = new ThreadLocal<BaseTraceData>();
-	
 	/**
 	 * 应用名称
 	 */
@@ -22,6 +20,11 @@ public class BaseTraceData implements Serializable {
 	 * 本地IP地址
 	 */
 	private String ipAddress;
+	
+	/**
+	 * 端口号
+	 */
+	private String port;
 	
 	/**
 	 * 服务接口名称
@@ -131,38 +134,15 @@ public class BaseTraceData implements Serializable {
 		this.groupId = groupId;
 	}
 	
-	public Map<String,String> toRpcContextMap(){
-		Map<String,String> map = new HashMap<String, String>();
-		map.put(Constants.groupId,getGroupId());
-		map.put(Constants.hop,String.valueOf(getHop()));
-		return map;
-	}
-	
-	public static BaseTraceData fromRpcContextMap(Map<String, String> map){
-		if(map == null) {
-			return null;
-		}
-		else {
-			BaseTraceData parentData = new BaseTraceData();
-			parentData.setGroupId(map.get(Constants.groupId));
-			parentData.setHop(Integer.valueOf(map.get(Constants.hop)));
-			return parentData;
-		}
-	}
-	
 	public String toString(){
 		return ReflectionToStringBuilder.toString(this);
 	}
 	
-	public static BaseTraceData get(){
-		return Container.get();
+	public String getPort() {
+		return port;
 	}
-	
-	public static void clean(){
-		Container.remove();
-	}
-	
-	public static void add(BaseTraceData traceData){
-		Container.set(traceData);
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 }
