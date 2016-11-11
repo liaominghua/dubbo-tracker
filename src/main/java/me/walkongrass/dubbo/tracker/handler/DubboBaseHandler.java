@@ -3,6 +3,10 @@
  */
 package me.walkongrass.dubbo.tracker.handler;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.common.logger.Logger;
@@ -28,7 +32,39 @@ public abstract class DubboBaseHandler {
 	
 	@Autowired(required=false)
 	private DubboTracerService tracerService;
-
+	
+	private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+	private final LinkedBlockingDeque<BaseTraceData> queue = new LinkedBlockingDeque<BaseTraceData>(100);
+	
+	public DubboBaseHandler(){
+		try{
+			
+			for(int i = 0 ;i < 5 ;i ++) {
+				executorService.submit(new Runnable() {
+					
+					public void run() {
+						try{
+							BaseTraceData traceData = queue.take();
+							if(getTracerService() != null) {
+								try{
+									getTracerService() .trace(traceData);
+								}catch(Exception e) {
+									logger.debug("send trace data error,"+traceData.toString(),e);
+								}
+							}
+							else {
+								logger.debug("trace data:"+traceData.toString());
+							}
+						}catch(Exception e){
+							
+						}
+					}
+				});
+			}
+		}catch(Exception e) {
+			
+		}
+	}
 	protected void fullfillContext(BaseTraceData baseTraceData){
 		if(baseTraceData == null) {
 			return ;
@@ -42,16 +78,14 @@ public abstract class DubboBaseHandler {
 	}
 	
 	protected void sendTraceData(BaseTraceData traceData){
-		
-		if(this.tracerService != null) {
-			try{
-				tracerService.trace(traceData);
-			}catch(Exception e) {
-				logger.debug("send trace data error,"+traceData.toString(),e);
+		try{
+			if(queue.size() >= 100) {
+				//直接丢弃该数据，不阻塞
+				return;
 			}
-		}
-		else {
-			logger.debug("trace data:"+traceData.toString());
+			queue.offer(traceData);
+		}catch(Exception e) {
+			
 		}
 	}
 	
