@@ -44,13 +44,14 @@ public class DubboConsumerRequestHandler extends DubboBaseHandler{
 			traceData.setVersion(url.getParameter(Constants.VERSION_KEY));
 			traceData.setType("consumer");
 			if(upstreamData != null) {
-				traceData.setHop(upstreamData.getHop()+1);
+				// 如果upstream不为空，则直接传递，此值已经在
+				traceData.setHop(upstreamData.getHop());
 				traceData.setGroupId(upstreamData.getGroupId());
+				
 			}
-			
 			fullfillContext(traceData);
-
 			sendTraceData(traceData);
+			
 		}catch(Exception e) {
 				logger.debug("error:",e);
 		}

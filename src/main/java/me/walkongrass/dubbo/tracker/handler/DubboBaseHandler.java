@@ -43,21 +43,24 @@ public abstract class DubboBaseHandler {
 				executorService.submit(new Runnable() {
 					
 					public void run() {
-						try{
-							BaseTraceData traceData = queue.take();
-							if(getTracerService() != null) {
-								try{
-									getTracerService() .trace(traceData);
-								}catch(Exception e) {
-									logger.debug("send trace data error,"+traceData.toString(),e);
+						while(true){
+							try{
+								BaseTraceData traceData = queue.take();
+								if(getTracerService() != null) {
+									try{
+										getTracerService() .trace(traceData);
+									}catch(Exception e) {
+										logger.debug("send trace data error,"+traceData.toString(),e);
+									}
 								}
+								else {
+									logger.debug("trace data:"+traceData.toString());
+								}
+							}catch(Exception e){
+								
 							}
-							else {
-								logger.debug("trace data:"+traceData.toString());
-							}
-						}catch(Exception e){
-							
 						}
+						
 					}
 				});
 			}
